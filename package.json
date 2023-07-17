@@ -1,0 +1,28 @@
+{
+  "name": "lms-summer_project",
+  "version": "1.0.0",
+  "description": "online system for library management",
+  "main": "dashboard.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Katwal10?tab=repositories"
+  },
+  "keywords": [
+    "online",
+    "library",
+    "resource",
+    "management",
+    "database",
+    "web",
+    "application"
+  ],
+  "author": "Ayush Katwal-NCIT",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql": "^2.18.1"
+  }
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Account Form</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      margin: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    label,
+    input,
+    select,
+    button {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="submit"] {
+      padding: 10px 20px;
+      background-color: #6C22C9;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #bookContainer {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bookInput {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .bookInput input[type="text"] {
+      flex-grow: 1;
+    }
+
+    #addbookOption {
+      text-align: center;
+      font-size: larger;
+      color: white;
+      height: 20px;
+      width: 20px;
+      background-color: #6C22C9;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    #createBtn {
+      margin-top: 5%;
+      background-color: #6C22C9;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .headerBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      height: 35px;
+      width: 130px;
+      margin: 16px;
+      background-color: #6C22C9;
+      cursor: pointer;
+    }
+
+    .headerContainer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topRightContainer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .headerBtn {
+        width: 100px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="headerContainer">
+    <h2 style="color: #6C22C9;">Student Library Account</h2>
+    <div class="topRightContainer">
+      <div class="headerBtn" id="CheckAcc-Btn">Check Account</div>
+      <div class="headerBtn" id="GoHome" style="font-size: 10px; word-spacing: 3px;"><i class="fa-solid fa-house"> H o
+          m e</i></div>
+    </div>
+  </div>
+  <hr>
+  <br>
+  <form style="max-width: 500px;" id="studentForm">
+    <label for="date">Book Issue Date:</label>
+    <input type="date" id="date" name="date" required>
+
+    <label for="id">ID No.:</label>
+    <input type="text" id="id" name="id" required>
+
+    <label for="name">Student Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="program">Program:</label>
+    <select id="program" name="program" required>
+      <option value="">Select Program</option>
+      <option value="BIM">BIM</option>
+      <option value="BSc. CSIT">BSc. CSIT</option>
+      <option value="BCA">BCA</option>
+      <option value="BBM">BBM</option>
+      <option value="BBS">BBS</option>
+    </select>
+
+    <label for="semester">Semester:</label>
+    <input type="text" id="semester" name="semester" required>
+
+    <label for="book">Book Name:</label>
+    <div id="bookContainer">
+      <div class="bookInput">
+        <input type="text" class="book-input" name="book[]" required>
+      </div>
+    </div>
+    <div id="addbookOption" type="button" onclick="addBookInput()">+</div>
+
+    <input id="createBtn" type="button" value="Create" onclick="submitForm()">
+  </form>
+
+  <script>
+    function addBookInput() {
+      const bookContainer = document.getElementById("bookContainer");
+      const newBookInput = document.createElement("div");
+      newBookInput.classList.add("bookInput");
+      newBookInput.innerHTML = `<input type="text" class="book-input" name="book[]" required><button type="button" onclick="removeBookInput(this)">-</button>`;
+      bookContainer.appendChild(newBookInput);
+    }
+
+    function removeBookInput(inputElement) {
+      const bookContainer = document.getElementById("bookContainer");
+      bookContainer.removeChild(inputElement.parentNode);
+    }
+
+    function submitForm() {
+      const date = document.getElementById('date').value;
+      const id = document.getElementById('id').value;
+      const name = document.getElementById('name').value;
+      const program = document.getElementById('program').value;
+      const semester = document.getElementById('semester').value;
+      const books = document.getElementsByClassName('book-input');
+
+      const bookValues = Array.from(books).map(input => input.value.trim()).filter(value => value !== '');
+
+      const data = {
+        date: date,
+        id: id,
+        name: name,
+        program: program,
+        semester: semester,
+        book: bookValues
+      };
+
+      fetch('/submit-student', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        // Handle the server response
+        // Reset the form fields after successful submission
+        document.getElementById("studentForm").reset();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle any errors that occur during the request
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const checkAccountBtn = document.getElementById("CheckAcc-Btn");
+
+      checkAccountBtn.addEventListener("click", function () {
+        window.location.href = "account.html";
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const inventoryContainer = document.getElementById("GoHome");
+      inventoryContainer.addEventListener("click", function () {
+        window.location.href = "dashboard.html";
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,291 @@
+const express = require('express');
+const app = express();
+const mysql = require('mysql');
+
+app.use(express.json()); // Middleware to parse JSON
+app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded bodies
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'ayush9841190033',
+  database: 'library_management_system'
+});
+
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to the database:', err);
+  } else {
+    console.log('Connected to the database');
+  }
+});
+
+const port = 3000; // Specify the port number you want to use
+
+// Route for handling form submission of inventory.form
+app.post('/submit', (req, res) => {
+  const { bookID, category, name, numOfBooks, authorPublication, price } = req.body;
+
+  console.log('bookID:', bookID); // Log the value of bookID
+
+  // Check if the bookID already exists in the database
+  const selectQuery = 'SELECT * FROM inventory WHERE Book_ID = ?';
+  console.log('selectQuery:', selectQuery); // Log the select query
+  console.log('bookID value:', bookID); // Log the value being passed in the query
+  connection.query(selectQuery, [bookID], (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      res.status(500).json({ error: 'An error occurred', details: err });
+      return;
+    }
+
+    if (results.length === 0) {
+      // If the bookID doesn't exist, insert a new row
+      const insertQuery = 'INSERT INTO inventory (Book_ID, Course_Category, Book_Name, No_of_Books, `Author/Publication`, Price) VALUES (?, ?, ?, ?, ?, ?)';
+      const values = [bookID, category, name, numOfBooks, authorPublication, price];
+
+      connection.query(insertQuery, values, (err, result) => {
+        if (err) {
+          console.error('Error saving data:', err);
+          res.status(500).json({ error: 'An error occurred', details: err });
+        } else {
+          console.log('Data saved successfully');
+          res.status(200).json({ message: 'Data saved successfully' });
+        }
+      });
+    } else {
+      // If the bookID already exists, update the existing row
+      const updateQuery = 'UPDATE inventory SET No_of_Books = No_of_Books + ? WHERE Book_ID = ?';
+      const values = [numOfBooks, bookID];
+
+      connection.query(updateQuery, values, (err, result) => {
+        if (err) {
+          console.error('Error updating data:', err);
+          res.status(500).json({ error: 'An error occurred', details: err });
+        } else {
+          console.log('Data updated successfully');
+          res.status(200).json({ message: 'Data updated successfully' });
+        }
+      });
+    }
+  });
+});
+
+// Route for displaying the inventory table
+app.get('/inventory', (req, res) => {
+  const selectQuery = 'SELECT * FROM inventory';
+
+  connection.query(selectQuery, (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      res.status(500).json({ error: 'An error occurred', details: err });
+    } else {
+      res.send(generateInventoryTable(results));
+    }
+  });
+});
+
+function generateInventoryTable(data) {
+  const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+
+  let tableHTML = `
+    <table id="inventoryTable" class="inventory-table">
+      <thead>
+        <tr>
+          <th>Book ID</th>
+          <th>Category</th>
+          <th>Name</th>
+          <th>Number of Books</th>
+          <th>Author/Publication</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  data.forEach(row => {
+    tableHTML += `
+      <tr>
+        <td>${row.Book_ID}</td>
+        <td>${row.Course_Category}</td>
+        <td>${row.Book_Name}</td>
+        <td>${row.No_of_Books}</td>
+        <td>${row['Author/Publication']}</td>
+        <td>${row.Price}</td>
+      </tr>`;
+  });
+
+  tableHTML += `
+      </tbody>
+    </table>`;
+
+  return `
+    <html>
+    <head>
+      <title>Inventory Table</title>
+      <style>
+        .inventory-table {
+          border-collapse: collapse;
+          width: 100%;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+          border: 1px solid black;
+          padding: 8px;
+        }
+
+        .inventory-table th {
+          background-color: #6C22C9;
+          color: white;
+        }
+      </style>
+    </head>
+    <body>
+      ${tableHTML}
+    </body>
+    </html>
+  `;
+}
+
+
+app.post('/submit-student', (req, res) => {
+  const { date, id, name, program, semester, book } = req.body;
+
+  // Check if the Student_ID already exists in the student_account table
+  const selectQuery = 'SELECT * FROM student_account WHERE Student_ID = ?';
+  connection.query(selectQuery, [id], (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      res.status(500).json({ error: 'An error occurred', details: err });
+      return;
+    }
+
+    if (results.length === 0) {
+      // If the Student_ID doesn't exist, insert a new row in both tables
+      const studentQuery = 'INSERT INTO student_account (Student_ID, Student_name, Program, Semester) VALUES (?, ?, ?, ?)';
+      const studentValues = [id, name, program, semester];
+
+      connection.query(studentQuery, studentValues, (err, result) => {
+        if (err) {
+          console.error('Error inserting data into student_account table:', err);
+          res.status(500).json({ error: 'An error occurred', details: err });
+          return;
+        }
+        console.log('Data inserted into student_account table.');
+
+        // Insert data into books table
+        const bookValues = book.map(bookName => [id, date, bookName]);
+        const bookQuery = 'INSERT INTO books (Student_ID, Book_Issued_Date, Book_Name) VALUES ?';
+
+        connection.query(bookQuery, [bookValues], (err, result) => {
+          if (err) {
+            console.error('Error inserting data into books table:', err);
+            res.status(500).json({ error: 'An error occurred', details: err });
+            return;
+          }
+          console.log('Data inserted into books table.');
+          res.status(200).json({ message: 'Data inserted successfully' });
+        });
+      });
+    } else {
+      // If the Student_ID already exists, insert data into books table only
+      const bookValues = book.map(bookName => [id, date, bookName]);
+      const bookQuery = 'INSERT INTO books (Student_ID, Book_Issued_Date, Book_Name) VALUES ?';
+
+      connection.query(bookQuery, [bookValues], (err, result) => {
+        if (err) {
+          console.error('Error inserting data into books table:', err);
+          res.status(500).json({ error: 'An error occurred', details: err });
+          return;
+        }
+        console.log('Data inserted into books table.');
+        res.status(200).json({ message: 'Data inserted successfully' });
+      });
+    }
+  });
+});
+
+
+// Route to handle the account checking logic
+app.post('/check-account', (req, res) => {
+  const { studentID, studentName } = req.body;
+
+  // Perform a database query to check if the account exists
+  const query = 'SELECT sa.Student_ID, sa.Student_name, sa.Program, sa.Semester, b.Book_Name, b.Book_Issued_Date FROM student_account sa LEFT JOIN books b ON sa.Student_ID = b.Student_ID WHERE sa.Student_ID = ? AND sa.Student_name = ?';
+  // Replace `connection` with your database connection object
+  connection.query(query, [studentID, studentName], (error, results) => {
+    if (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'An error occurred while checking the account.' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.json({ accountFound: false });
+    } else {
+      const accountData = {
+        studentID: results[0].Student_ID,
+        studentName: results[0].Student_name,
+        program: results[0].Program,
+        semester: results[0].Semester,
+        bookName: results[0].Book_Name,
+        bookIssuedDate: results[0].Book_Issued_Date.toISOString().split('T')[0]
+      };
+      res.json({ accountFound: true, accountData });
+    }
+  });
+});   
+
+// Endpoint to handle the account checking request
+app.post('/check-account', (req, res) => {
+  // Retrieve the studentID and studentName from the request body
+  const { studentID, studentName } = req.body;
+
+  // Construct the SQL query
+  const query = `
+    SELECT sa.Student_ID, sa.Student_name, sa.Program, sa.Semester, b.Book_Name, b.Book_Issued_Date
+    FROM student_account sa
+    LEFT JOIN books b ON sa.Student_ID = b.Student_ID
+    WHERE sa.Student_ID = ? AND sa.Student_name = ?
+  `;
+
+  // Execute the query with the provided student ID and name
+  connection.query(query, [studentID, studentName], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.json({ accountFound: false });
+    } else {
+      if (results.length > 0) {
+        // Account found, return the data
+        const accountData = results.map((row) => ({
+          studentID: row.Student_ID,
+          studentName: row.Student_name,
+          program: row.Program,
+          semester: row.Semester,
+          bookName: row.Book_Name,
+          bookIssuedDate: row.Book_Issued_Date.toISOString().split('T')[0]
+        }));
+        res.json({ accountFound: true, accountData });
+      } else {
+        // Account not found
+        res.json({ accountFound: false });
+      }
+    }
+  });
+});
+
+
+
+// Serve the account.html file
+app.get('/account', (req, res) => {
+  res.sendFile(__dirname + '/account.html');
+});
+
+
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});

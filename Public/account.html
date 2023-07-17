@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Checking</title>
+</head>
+
+<body>
+  <h1>Account Checking</h1>
+  <form id="accountForm">
+    <label for="studentID">Student ID:</label>
+    <input type="text" id="studentID" name="studentID" required>
+
+    <label for="studentName">Student Name:</label>
+    <input type="text" id="studentName" name="studentName" required>
+
+    <input type="button" value="Check Account" onclick="checkAccount()">
+  </form>
+
+  <div id="accountResult"></div>
+
+  <script>
+    function checkAccount() {
+      const studentID = document.getElementById('studentID').value;
+      const studentName = document.getElementById('studentName').value;
+
+      fetch('/check-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ studentID, studentName })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.accountFound) {
+          displayAccountData(data.accountData);
+        } else {
+          displayAccountNotFound();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    function displayAccountData(accountData) {
+      const accountResult = document.getElementById('accountResult');
+      accountResult.innerHTML = `
+        <h2>Account Information</h2>
+        <table>
+          <tr>
+            <th>Student ID</th>
+            <th>Student Name</th>
+            <th>Program</th>
+            <th>Semester</th>
+            <th>Book Name</th>
+            <th>Book Issued Date</th>
+          </tr>
+          <tr>
+            <td>${accountData.studentID}</td>
+            <td>${accountData.studentName}</td>
+            <td>${accountData.program}</td>
+            <td>${accountData.semester}</td>
+            <td>${accountData.bookName}</td>
+            <td>${accountData.bookIssuedDate}</td>
+          </tr>
+        </table>
+      `;
+    }
+
+    function displayAccountNotFound() {
+      const accountResult = document.getElementById('accountResult');
+      accountResult.innerHTML = '<p>Account not found. Please check the entered information.</p>';
+    }
+  </script>
+</body>
+
+</html>

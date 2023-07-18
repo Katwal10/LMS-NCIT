@@ -1,0 +1,11 @@
+Some issues to be inspected while testing the project after the completion of the coding part:
+
+1) FavIcon code attachment
+
+2) javascript codes in the <script> tag which is present inside html files is to be converted in client.js file or in seperate js file
+
+3) User-status (online/offline) section to be checked while running in the server or while hosting/deploying project in the web. 
+
+4) Authorization & Authentication: Login part and password changing, UserID and Password to be stored somewhere and can be retrieving by clicking Forgot Password button and verification.
+
+5)

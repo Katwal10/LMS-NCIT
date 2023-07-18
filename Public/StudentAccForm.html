@@ -103,7 +103,7 @@
   <div class="headerContainer">
     <h2 style="color: #6C22C9;">Student Library Account</h2>
     <div class="topRightContainer">
-      <div class="headerBtn" id="CheckAcc-Btn">Check Account</div>
+      <div class="headerBtn" id="checkAccountBtn">Check Account</div>
       <div class="headerBtn" id="GoHome" style="font-size: 10px; word-spacing: 3px;"><i class="fa-solid fa-house"> H o
           m e</i></div>
     </div>
@@ -145,20 +145,20 @@
   </form>
 
   <script>
-    function addBookInput() {
-      const bookContainer = document.getElementById("bookContainer");
-      const newBookInput = document.createElement("div");
-      newBookInput.classList.add("bookInput");
-      newBookInput.innerHTML = `<input type="text" class="book-input" name="book[]" required><button type="button" onclick="removeBookInput(this)">-</button>`;
-      bookContainer.appendChild(newBookInput);
-    }
+  function addBookInput() {
+    const bookContainer = document.getElementById("bookContainer");
+    const newBookInput = document.createElement("div");
+    newBookInput.classList.add("bookInput");
+    newBookInput.innerHTML = `<input type="text" class="book-input" name="book[]" required><button type="button" onclick="removeBookInput(this)">-</button>`;
+    bookContainer.appendChild(newBookInput);
+  }
 
-    function removeBookInput(inputElement) {
-      const bookContainer = document.getElementById("bookContainer");
-      bookContainer.removeChild(inputElement.parentNode);
-    }
+  function removeBookInput(inputElement) {
+    const bookContainer = document.getElementById("bookContainer");
+    bookContainer.removeChild(inputElement.parentNode);
+  }
 
-    function submitForm() {
+  function submitForm() {
       const date = document.getElementById('date').value;
       const id = document.getElementById('id').value;
       const name = document.getElementById('name').value;
@@ -197,21 +197,21 @@
       });
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const checkAccountBtn = document.getElementById("CheckAcc-Btn");
-
-      checkAccountBtn.addEventListener("click", function () {
-        window.location.href = "account.html";
-      });
+  document.addEventListener("DOMContentLoaded", function() {
+    const checkAccountBtn = document.getElementById("checkAccountBtn");
+    checkAccountBtn.addEventListener("click", function() {
+      window.location.href = "account.html";
     });
-
-    document.addEventListener("DOMContentLoaded", function () {
-      const inventoryContainer = document.getElementById("GoHome");
-      inventoryContainer.addEventListener("click", function () {
-        window.location.href = "dashboard.html";
-      });
+  });
+  
+  document.addEventListener("DOMContentLoaded", function () {
+    const inventoryContainer = document.getElementById("GoHome");
+    inventoryContainer.addEventListener("click", function() {
+      window.location.href = "dashboard.html";
     });
-  </script>
+  });
+</script>
+
 </body>
 
 </html>

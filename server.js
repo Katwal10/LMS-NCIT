@@ -205,45 +205,13 @@ app.post('/submit-student', (req, res) => {
   });
 });
 
-
-// Route to handle the account checking logic
+  // Route to handle the account checking request
 app.post('/check-account', (req, res) => {
-  const { studentID, studentName } = req.body;
-
-  // Perform a database query to check if the account exists
-  const query = 'SELECT sa.Student_ID, sa.Student_name, sa.Program, sa.Semester, b.Book_Name, b.Book_Issued_Date FROM student_account sa LEFT JOIN books b ON sa.Student_ID = b.Student_ID WHERE sa.Student_ID = ? AND sa.Student_name = ?';
-  // Replace `connection` with your database connection object
-  connection.query(query, [studentID, studentName], (error, results) => {
-    if (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'An error occurred while checking the account.' });
-      return;
-    }
-
-    if (results.length === 0) {
-      res.json({ accountFound: false });
-    } else {
-      const accountData = {
-        studentID: results[0].Student_ID,
-        studentName: results[0].Student_name,
-        program: results[0].Program,
-        semester: results[0].Semester,
-        bookName: results[0].Book_Name,
-        bookIssuedDate: results[0].Book_Issued_Date.toISOString().split('T')[0]
-      };
-      res.json({ accountFound: true, accountData });
-    }
-  });
-});   
-
-// Endpoint to handle the account checking request
-app.post('/check-account', (req, res) => {
-  // Retrieve the studentID and studentName from the request body
   const { studentID, studentName } = req.body;
 
   // Construct the SQL query
   const query = `
-    SELECT sa.Student_ID, sa.Student_name, sa.Program, sa.Semester, b.Book_Name, b.Book_Issued_Date
+    SELECT sa.Student_ID, sa.Student_name, sa.Program, sa.Semester, b.Book_Name, DATE_FORMAT(b.Book_Issued_Date, '%Y-%m-%d') AS Book_Issued_Date
     FROM student_account sa
     LEFT JOIN books b ON sa.Student_ID = b.Student_ID
     WHERE sa.Student_ID = ? AND sa.Student_name = ?
@@ -253,18 +221,20 @@ app.post('/check-account', (req, res) => {
   connection.query(query, [studentID, studentName], (err, results) => {
     if (err) {
       console.error('Error executing query:', err);
-      res.json({ accountFound: false });
+      res.status(500).json({ accountFound: false, error: 'An error occurred while checking the account.' });
     } else {
       if (results.length > 0) {
         // Account found, return the data
-        const accountData = results.map((row) => ({
-          studentID: row.Student_ID,
-          studentName: row.Student_name,
-          program: row.Program,
-          semester: row.Semester,
-          bookName: row.Book_Name,
-          bookIssuedDate: row.Book_Issued_Date.toISOString().split('T')[0]
-        }));
+        const accountData = {
+          studentID: results[0].Student_ID,
+          studentName: results[0].Student_name,
+          program: results[0].Program,
+          semester: results[0].Semester,
+          books: results.map(row => ({
+            bookName: row.Book_Name,
+            bookIssuedDate: row.Book_Issued_Date
+          }))
+        };
         res.json({ accountFound: true, accountData });
       } else {
         // Account not found
@@ -275,10 +245,65 @@ app.post('/check-account', (req, res) => {
 });
 
 
+/****************                      Route to handle book removal 
+app.delete('/remove-book/:studentID', (req, res) => {
+  const studentID = req.params.studentID;
+  const { bookName, bookIssuedDate } = req.body;
 
-// Serve the account.html file
-app.get('/account', (req, res) => {
-  res.sendFile(__dirname + '/account.html');
+  // Perform the SQL delete query to remove the book from the database
+  const deleteQuery = `DELETE FROM books WHERE studentID = ? AND bookName = ? AND bookIssuedDate = ?`;
+
+  connection.query(deleteQuery, [studentID, bookName, bookIssuedDate], (error, results) => {
+    if (error) {
+      console.error('Error:', error);
+      return res.status(500).json({ message: 'An error occurred while removing the book.' });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: 'Book not found for the given student ID.' });
+    }
+
+    return res.status(200).json({ message: 'Book removed successfully.' });
+  });
+});                   *//////////////////////////
+
+
+// Route to handle account deletion request
+app.delete('/delete-account/:studentID', (req, res) => {
+  const studentID = req.params.studentID;
+
+  // Delete rows from the 'books' table associated with the student ID
+  const deleteBooksQuery = `
+    DELETE FROM books
+    WHERE Student_ID = ?
+  `;
+
+  // Execute the 'deleteBooksQuery' first to remove associated rows from the 'books' table
+  connection.query(deleteBooksQuery, [studentID], (deleteBooksErr) => {
+    if (deleteBooksErr) {
+      console.error('Error executing delete query for books:', deleteBooksErr);
+      res.status(500).json({ success: false, message: 'An error occurred while deleting the account.' });
+    } else {
+      // Now delete the row from the 'student_account' table
+      const deleteStudentAccountQuery = `
+        DELETE FROM student_account
+        WHERE Student_ID = ?
+      `;
+
+      connection.query(deleteStudentAccountQuery, [studentID], (deleteStudentAccountErr, deleteResult) => {
+        if (deleteStudentAccountErr) {
+          console.error('Error executing delete query for student_account:', deleteStudentAccountErr);
+          res.status(500).json({ success: false, message: 'An error occurred while deleting the account.' });
+        } else {
+          if (deleteResult.affectedRows > 0) {
+            res.json({ success: true, message: 'Account deleted successfully.' });
+          } else {
+            res.status(404).json({ success: false, message: 'Account not found.' });
+          }
+        }
+      });
+    }
+  });
 });
 
 

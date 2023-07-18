@@ -1,30 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account Checking</title>
-</head>
+  <title>Check Student Account</title>
+  <style>
+    /* Styling for the form */
+    h2 {
+      color: #6C22C9;
+    }
 
+    #studentForm {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    #studentForm label {
+      margin-right: 10px;
+    }
+
+    #checkButton {
+      background-color: #6C22C9;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+
+    /* Styling for the account data section */
+    #accountData {
+      margin-top: 20px;
+    }
+
+    h3 {
+      color: #6C22C9;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    #studentForm {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    #studentForm label {
+      margin-right: 10px;
+    }
+
+    #studentID,
+    #studentName {
+      margin-right: 20px;
+    }
+
+    #checkButton {
+      background-color: #6C22C9;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+
+    #deleteButton {
+      display: none; /* Initially hidden */
+      background-color: #FF4C4C;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+
+    
+  </style>
+</head>
 <body>
-  <h1>Account Checking</h1>
-  <form id="accountForm">
+  <h2>Check Student Account:</h2>
+  <form id="studentForm">
     <label for="studentID">Student ID:</label>
     <input type="text" id="studentID" name="studentID" required>
-
     <label for="studentName">Student Name:</label>
     <input type="text" id="studentName" name="studentName" required>
-
-    <input type="button" value="Check Account" onclick="checkAccount()">
+    <button type="submit" id="checkButton">Check</button>
   </form>
+  <br>
+  <hr>
 
-  <div id="accountResult"></div>
+  <div id="accountData"></div>
+
+  <button id="deleteButton">Delete Account</button>
 
   <script>
-    function checkAccount() {
-      const studentID = document.getElementById('studentID').value;
-      const studentName = document.getElementById('studentName').value;
+    document.getElementById("studentForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const studentID = document.getElementById("studentID").value;
+      const studentName = document.getElementById("studentName").value;
 
       fetch('/check-account', {
         method: 'POST',
@@ -34,48 +114,82 @@
         body: JSON.stringify({ studentID, studentName })
       })
       .then(response => response.json())
-      .then(data => {
-        if (data.accountFound) {
-          displayAccountData(data.accountData);
+      .then(result => {
+        const accountDataDiv = document.getElementById("accountData");
+        accountDataDiv.innerHTML = "";
+
+        if (result.accountFound) {
+          const { studentID, studentName, program, semester, books } = result.accountData;
+          const html = `
+            <h3>Account Data:</h3>
+            <p><strong>Student ID:</strong> ${studentID}</p>
+            <p><strong>Student Name:</strong> ${studentName}</p>
+            <p><strong>Program:</strong> ${program}</p>
+            <p><strong>Semester:</strong> ${semester}</p>
+          `;
+
+          if (books && books.length > 0) {
+            const booksHtml = `
+              <h4>Books:</h4>
+              <ul>
+                ${books.map(book => `<li>${book.bookName} - Issued Date: ${book.bookIssuedDate}</li>`).join('')}
+              </ul>
+            `;
+            accountDataDiv.innerHTML = html + booksHtml;
+          } else {
+            accountDataDiv.innerHTML = html + "<p>No books issued.</p>";
+          }
+
+        
+
+          // Show the "Delete Account" button
+          document.getElementById("deleteButton").style.display = "inline-block";
         } else {
-          displayAccountNotFound();
+          accountDataDiv.innerHTML = "<p>Account not found.</p>";
+          // Hide the "Delete Account" button if no account found
+          document.getElementById("deleteButton").style.display = "none";
         }
       })
       .catch(error => {
         console.error('Error:', error);
+        document.getElementById("accountData").innerHTML = "<p>An error occurred while checking the account.</p>";
       });
-    }
+    });
 
-    function displayAccountData(accountData) {
-      const accountResult = document.getElementById('accountResult');
-      accountResult.innerHTML = `
-        <h2>Account Information</h2>
-        <table>
-          <tr>
-            <th>Student ID</th>
-            <th>Student Name</th>
-            <th>Program</th>
-            <th>Semester</th>
-            <th>Book Name</th>
-            <th>Book Issued Date</th>
-          </tr>
-          <tr>
-            <td>${accountData.studentID}</td>
-            <td>${accountData.studentName}</td>
-            <td>${accountData.program}</td>
-            <td>${accountData.semester}</td>
-            <td>${accountData.bookName}</td>
-            <td>${accountData.bookIssuedDate}</td>
-          </tr>
-        </table>
-      `;
-    }
+    document.getElementById("deleteButton").addEventListener("click", function() {
+        const studentID = document.getElementById("studentID").value;
+        if (confirm(`Are you sure you want to delete the account for Student ID: ${studentID}? This action cannot be undone.`)) {
+          // Send a DELETE request to the server to delete the account
+          fetch(`/delete-account/${studentID}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(result => {
+            // Display the result message
+            alert(result.message);
+            // Clear the account data div after successful deletion
+            document.getElementById("accountData").innerHTML = "";
+            // Hide the "Delete Account" button after successful deletion
+            document.getElementById("deleteButton").style.display = "none";
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert("An error occurred while deleting the account.");
+          });
+        }
+      }); 
 
-    function displayAccountNotFound() {
-      const accountResult = document.getElementById('accountResult');
-      accountResult.innerHTML = '<p>Account not found. Please check the entered information.</p>';
-    }
-  </script>
+  </script>     
+  
+
+    
 </body>
-
 </html>

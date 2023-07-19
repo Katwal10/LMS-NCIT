@@ -94,7 +94,7 @@ function generateInventoryTable(data) {
         <tr>
           <th>Book ID</th>
           <th>Category</th>
-          <th>Name</th>
+          <th>Book Name</th>
           <th>Number of Books</th>
           <th>Author/Publication</th>
           <th>Price</th>
@@ -245,27 +245,35 @@ app.post('/check-account', (req, res) => {
 });
 
 
-/****************                      Route to handle book removal 
-app.delete('/remove-book/:studentID', (req, res) => {
+app.delete('/remove-book/:studentID/:bookName', (req, res) => {
   const studentID = req.params.studentID;
-  const { bookName, bookIssuedDate } = req.body;
+  const bookName = req.params.bookName;
+
+  // Log the received parameters for debugging
+  console.log('Received request to remove book:');
+  console.log('Student ID:', studentID);
+  console.log('Book Name:', bookName);
 
   // Perform the SQL delete query to remove the book from the database
-  const deleteQuery = `DELETE FROM books WHERE studentID = ? AND bookName = ? AND bookIssuedDate = ?`;
+  const deleteQuery = `DELETE FROM books WHERE Student_ID = ? AND Book_Name = ?`;
 
-  connection.query(deleteQuery, [studentID, bookName, bookIssuedDate], (error, results) => {
+  connection.query(deleteQuery, [studentID, bookName], (error, results) => {
     if (error) {
       console.error('Error:', error);
       return res.status(500).json({ message: 'An error occurred while removing the book.' });
     }
 
     if (results.affectedRows === 0) {
-      return res.status(404).json({ message: 'Book not found for the given student ID.' });
+      return res.status(404).json({ message: 'Book not found for the given student ID and book name.' });
     }
 
+    // Book successfully deleted from the database
+    console.log('Book removed successfully.');
     return res.status(200).json({ message: 'Book removed successfully.' });
   });
-});                   *//////////////////////////
+});
+
+
 
 
 // Route to handle account deletion request

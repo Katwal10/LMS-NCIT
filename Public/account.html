@@ -97,6 +97,9 @@
 
   <div id="accountData"></div>
 
+  <!-- Assuming this container holds the list of books -->
+  <div id="booksContainer"></div>
+
   <button id="deleteButton">Delete Account</button>
 
   <script>
@@ -132,7 +135,7 @@
             const booksHtml = `
               <h4>Books:</h4>
               <ul>
-                ${books.map(book => `<li>${book.bookName} - Issued Date: ${book.bookIssuedDate}</li>`).join('')}
+                ${books.map(book => `<li>${book.bookName} - Issued Date: ${book.bookIssuedDate}<button id="removeIssuedBookbtn" style="margin-left: 10px;" type="button" onclick="removeIssuedBook(this)">-</button></li>`).join('')}
               </ul>
             `;
             accountDataDiv.innerHTML = html + booksHtml;
@@ -155,6 +158,69 @@
         document.getElementById("accountData").innerHTML = "<p>An error occurred while checking the account.</p>";
       });
     });
+
+
+    function removeIssuedBook(studentID, bookName) {
+  // Send an API request to delete the book from the database
+  fetch(`/remove-book/${encodeURIComponent(studentID)}/${encodeURIComponent(bookName)}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Failed to delete the book from the database. Server responded with status: ${response.status}`);
+    }
+    // Book successfully deleted from the database, now update the UI
+    updateBooksUI();
+  })
+  .catch(error => {
+    console.error(error);
+    alert('Failed to remove the book. Please try again later.');
+  });
+}
+
+
+
+// Function to update the UI with the list of books
+function updateBooksUI() {
+  // Send an API request to get the updated list of books from the server
+  fetch('/get-books')
+    .then(response => response.json())
+    .then(data => {
+      books = data; // Assuming the server sends the list of books in the response
+      // Generate the HTML for the books list
+      const booksHtml = `
+        <h4>Books:</h4>
+        <ul>
+          ${books.map(book => `
+            <li>
+              ${book.Book_Name} - Issued Date: ${book.Book_Issued_Date}
+              <button
+                style="margin-left: 10px;"
+                type="button"
+                onclick="removeIssuedBook('${book.Student_ID}', '${book.Book_Name}')"
+              >
+                -
+              </button>
+            </li>
+          `).join('')}
+        </ul>
+      `;
+
+      // Update the books container with the new HTML
+      const booksContainer = document.getElementById('booksContainer');
+      booksContainer.innerHTML = booksHtml;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+// Initial update of the UI
+updateBooksUI();
+
 
     document.getElementById("deleteButton").addEventListener("click", function() {
         const studentID = document.getElementById("studentID").value;
@@ -186,6 +252,7 @@
           });
         }
       }); 
+
 
   </script>     
   

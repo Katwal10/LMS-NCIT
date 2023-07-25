@@ -9,30 +9,6 @@
     integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-    .headerContainer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .topRightContainer {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .headerBtn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      height: 35px;
-      width: 130px;
-      margin: 16px;
-      background-color: #6C22C9;
-      cursor: pointer;
-    }
 
     table {
       width: 100%;
@@ -51,38 +27,12 @@
       background-color: #6C22C9;
       color: white;
     }
-
-    @media (max-width: 768px) {
-      .headerContainer {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .topRightContainer {
-        justify-content: space-between;
-        width: 100%;
-        margin-top: 20px;
-        margin-bottom: 0;
-      }
-
-      .headerBtn {
-        margin: 0;
-        width: 100%;
-        max-width: 200px;
-      }
-    }
+    
   </style>
 </head>
 
 <body>
-  <div class="headerContainer">
-    <h2 style="color: #6C22C9;">Inventory</h2>
-    <div class="topRightContainer">
-      <div class="headerBtn" id="GoHome" style="font-size: 10px; word-spacing: 3px;"><i class="fa-solid fa-house"> H
-          o m e</i></div>
-    </div>
-  </div>
-  <hr>
+
   <div id="inventoryTableContainer"></div>
   <script>
     document.addEventListener("DOMContentLoaded", function () {

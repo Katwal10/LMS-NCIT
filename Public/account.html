@@ -4,87 +4,136 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Check Student Account</title>
-  <style>
-    /* Styling for the form */
-    h2 {
-      color: #6C22C9;
-    }
-
-    #studentForm {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    #studentForm label {
-      margin-right: 10px;
-    }
-
-    #checkButton {
-      background-color: #6C22C9;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-    }
-
-    /* Styling for the account data section */
-    #accountData {
-      margin-top: 20px;
-    }
-
-    h3 {
-      color: #6C22C9;
-    }
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    li {
-      margin-bottom: 8px;
-    }
-
-    #studentForm {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    #studentForm label {
-      margin-right: 10px;
-    }
-
-    #studentID,
-    #studentName {
-      margin-right: 20px;
-    }
-
-    #checkButton {
-      background-color: #6C22C9;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-    }
-
-    #deleteButton {
-      display: none; /* Initially hidden */
-      background-color: #FF4C4C;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-    }
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      /* Styling for the form */
+      h2 {
+        color: #6C22C9;
+      }
     
-  </style>
+      #GoHome-Btn {
+        font-size: 10px;
+        word-spacing: 3px;
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        height: 35px;
+        width: 130px;
+        background-color: #6C22C9;
+        cursor: pointer;
+      }
+    
+      #studentForm {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+    
+      #studentForm label {
+        margin-right: 10px;
+      }
+    
+      #checkButton {
+        background-color: #6C22C9;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+    
+      /* Styling for the account data section */
+      #accountData {
+        margin-top: 20px;
+      }
+    
+      h3 {
+        color: #6C22C9;
+      }
+    
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+    
+      li {
+        margin-bottom: 8px;
+      }
+    
+      #studentForm {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+    
+      #studentForm label {
+        margin-right: 10px;
+      }
+    
+      #studentID,
+      #studentName {
+        margin-right: 20px;
+      }
+    
+      #checkButton {
+        background-color: #6C22C9;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+    
+      #deleteButton {
+        display: none; /* Initially hidden */
+        background-color: #FF4C4C;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+    
+      @media screen and (max-width: 600px) {
+        h2 {
+          text-align: center;
+        }
+        #GoHome-Btn {
+          position: static;
+          display: block;
+          text-align: center;
+          margin: 10px;
+          align-items: center;
+          justify-content: center;
+        }
+        #studentForm {
+          flex-direction: column;
+        }   
+        #studentID,
+        #studentName {
+          max-width: 100%;
+          margin-right: 0;
+          margin-bottom: 10px;
+        }   
+        #checkButton {
+          margin-top: 10px;
+        }
+        #accountData {
+          margin-top: 20px;
+        }
+      }
+    </style>
+    
 </head>
 <body>
   <h2>Check Student Account:</h2>
+  <div id="GoHome-Btn" style="font-size: 10px; word-spacing: 3px;"><i class="fa-solid fa-house"> H
+    o m e</i></div>
   <form id="studentForm">
     <label for="studentID">Student ID:</label>
     <input type="text" id="studentID" name="studentID" required>
@@ -101,11 +150,19 @@
   <div id="booksContainer"></div>
 
   <button id="deleteButton">Delete Account</button>
+  
 
   <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const homeBtnContainer = document.getElementById("GoHome-Btn");
+    homeBtnContainer.addEventListener("click", function() {
+      window.location.href = "dashboard.html";
+    });
+    });
+
     document.getElementById("studentForm").addEventListener("submit", function(event) {
       event.preventDefault();
-
       const studentID = document.getElementById("studentID").value;
       const studentName = document.getElementById("studentName").value;
 
@@ -135,7 +192,9 @@
             const booksHtml = `
               <h4>Books:</h4>
               <ul>
-                ${books.map(book => `<li>${book.bookName} - Issued Date: ${book.bookIssuedDate}<button id="removeIssuedBookbtn" style="margin-left: 10px;" type="button" onclick="removeIssuedBook(this)">-</button></li>`).join('')}
+                ${books.map(book => `<li>${book.bookName} - Issued Date: ${book.bookIssuedDate}
+                  <button style="margin-left: 10px;" class="removeBtn" data-student-id="${studentID}" data-book-name="${book.bookName}" data-issued-date="${book.bookIssuedDate}">-</button>
+                </li>`).join('')}
               </ul>
             `;
             accountDataDiv.innerHTML = html + booksHtml;
@@ -143,6 +202,47 @@
             accountDataDiv.innerHTML = html + "<p>No books issued.</p>";
           }
 
+
+
+
+  // Add an event listener to the document to handle "Remove" button
+document.addEventListener("click", function(event) {
+  if (event.target.classList.contains("removeBtn")) {
+    // Get the data attributes from the clicked "Remove" button
+    const studentID = event.target.dataset.studentId;
+    const bookName = event.target.dataset.bookName;
+    const bookIssuedDate = event.target.dataset.issuedDate;
+
+    // Show a confirmation alert box to the user
+    const confirmation = window.confirm("Are you sure you want to remove this book from the record?");
+    if (confirmation) {
+      // Call the removeIssuedBook function with the obtained values
+      removeIssuedBook(studentID, bookName, bookIssuedDate);
+
+      // Remove the row from the screen
+      event.target.closest('li').remove();
+    }
+  }
+});
+
+function removeIssuedBook(studentID, bookName, bookIssuedDate) {
+  fetch(`/remove-book/${studentID}/${bookName}/${bookIssuedDate}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Failed to delete the book from the database. Server responded with status: ${response.status}`);
+    }
+    // Book successfully deleted from the database
+  })
+  .catch(error => {
+    console.error(error);
+    alert('Failed to remove the book. Please try again later.');
+  });
+}
         
 
           // Show the "Delete Account" button
@@ -160,68 +260,8 @@
     });
 
 
-    function removeIssuedBook(studentID, bookName) {
-  // Send an API request to delete the book from the database
-  fetch(`/remove-book/${encodeURIComponent(studentID)}/${encodeURIComponent(bookName)}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`Failed to delete the book from the database. Server responded with status: ${response.status}`);
-    }
-    // Book successfully deleted from the database, now update the UI
-    updateBooksUI();
-  })
-  .catch(error => {
-    console.error(error);
-    alert('Failed to remove the book. Please try again later.');
-  });
-}
 
-
-
-// Function to update the UI with the list of books
-function updateBooksUI() {
-  // Send an API request to get the updated list of books from the server
-  fetch('/get-books')
-    .then(response => response.json())
-    .then(data => {
-      books = data; // Assuming the server sends the list of books in the response
-      // Generate the HTML for the books list
-      const booksHtml = `
-        <h4>Books:</h4>
-        <ul>
-          ${books.map(book => `
-            <li>
-              ${book.Book_Name} - Issued Date: ${book.Book_Issued_Date}
-              <button
-                style="margin-left: 10px;"
-                type="button"
-                onclick="removeIssuedBook('${book.Student_ID}', '${book.Book_Name}')"
-              >
-                -
-              </button>
-            </li>
-          `).join('')}
-        </ul>
-      `;
-
-      // Update the books container with the new HTML
-      const booksContainer = document.getElementById('booksContainer');
-      booksContainer.innerHTML = booksHtml;
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
-
-// Initial update of the UI
-updateBooksUI();
-
-
+  //Delete Student Account
     document.getElementById("deleteButton").addEventListener("click", function() {
         const studentID = document.getElementById("studentID").value;
         if (confirm(`Are you sure you want to delete the account for Student ID: ${studentID}? This action cannot be undone.`)) {

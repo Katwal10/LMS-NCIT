@@ -8,4 +8,8 @@ Some issues to be inspected while testing the project after the completion of th
 
 4) Authorization & Authentication: Login part and password changing, UserID and Password to be stored somewhere and can be retrieving by clicking Forgot Password button and verification.
 
-5)
+5) Divide server.js file codes into routes.js file  (Optional)
+
+6) Add footer (copyright txt) on the middle-bottom od login & dashboard page
+
+7)Free Hosting on internet 

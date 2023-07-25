@@ -26,9 +26,16 @@ function updateStatus() {
   });
   
   document.addEventListener("DOMContentLoaded", function () {
-    const inventoryContainer = document.getElementById("studentAccContainer");
-    inventoryContainer.addEventListener("click", function () {
+    const studentAccContainer = document.getElementById("studentAccContainer");
+    studentAccContainer.addEventListener("click", function () {
       window.location.href = "StudentAccForm.html";
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const adminsetContainer = document.getElementById("adminSettingsContainer");
+    adminsetContainer.addEventListener("click", function () {
+      window.location.href = "AdminSettings.html";
     });
   });
   

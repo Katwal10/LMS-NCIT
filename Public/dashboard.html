@@ -159,7 +159,7 @@
         </div>
         
         
-        <div class="container">
+        <div class="container" id="adminSettingsContainer">
             <div class="circle">
                 <img src="Logo&Images/Admin-Settings.png" height="95px" width="95px" style="padding-right: 5px;">
             </div>
@@ -167,48 +167,6 @@
         </div>
     </div>
     <!--footer>© 2023 NCIT. All Rights Reserved</footer-->
-
-    <script>
-        
-if (typeof window !== 'undefined') {
-    window.addEventListener('online', updateStatus);
-    window.addEventListener('offline', updateStatus);
-  }
-  
-  function updateStatus() {
-    const userStatus = document.getElementById('userStatus');
-    const isOnline = navigator.onLine;
-  
-    if (isOnline) {
-      userStatus.innerHTML = '<img height="35px" src="Logo&Images/User_Network_Status(On).png">';
-      userStatus.title = 'User: Online';
-    } else {
-      userStatus.innerHTML = '<img height="35px" src="Logo&Images/User_Network_Status(Off).png">';
-      userStatus.title = 'User: Offline';
-    }
-  }
-  
-  function confirmLogout() {
-    if (confirm("Are you sure you want to logout?")) {
-      window.location.href = "LogIn.html";
-    }
-  }
-  
-  document.addEventListener("DOMContentLoaded", function () {
-    const inventoryContainer = document.getElementById("inventoryContainer");
-    inventoryContainer.addEventListener("click", function () {
-      window.location.href = "InventoryForm.html";
-    });
-  });
-  
-  document.addEventListener("DOMContentLoaded", function () {
-    const inventoryContainer = document.getElementById("studentAccContainer");
-    inventoryContainer.addEventListener("click", function () {
-      window.location.href = "StudentAccForm.html";
-    });
-  });
- 
-    </script>
 
 </body>
 </html>

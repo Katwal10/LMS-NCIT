@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+
+    #GoHome-Btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      height: 35px;
+      width: 130px;
+      margin: 16px;
+      background-color: #6C22C9;
+      cursor: pointer;
+    }
+
+    .headerContainer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topRightContainer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    </style>
+
+</head>
+<body>
+    <div class="headerContainer">
+        <h2 style="color: #6C22C9;">Admin Settings</h2>
+        <div class="topRightContainer">
+          <div id="GoHome-Btn" style="font-size: 10px; word-spacing: 3px;"><i class="fa-solid fa-house"> H
+              o m e</i></div>
+        </div>
+      </div>
+    <hr>
+    <br>
+
+    <form action="" id="admin-settings-form">
+
+        <input type="text" placeholder="New User ID" id="new-username"><br>
+        <p class="errors" id="new-username-error"></p>
+            
+        <input type="password" placeholder="New Password" id="new-password"><br>
+        <p class="errors" id="new-password-error"></p>
+            
+        <input type="submit" value="Save Changes" id="save_btn">
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const goHomeBtn = document.getElementById("GoHome-Btn");
+        goHomeBtn.addEventListener("click", function () {
+        window.location.href = "dashboard.html";
+        });
+        });
+
+        // JavaScript code for handling form submission
+        document.getElementById("admin-settings-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Reset error messages
+            document.getElementById("new-username-error").innerHTML = "";
+            document.getElementById("new-password-error").innerHTML = "";
+
+            // Perform validation
+            let newUsername = document.getElementById("new-username");
+            let newPassword = document.getElementById("new-password");
+            let flag = true;
+
+            if (newUsername.value.length < 3) {
+                document.getElementById("new-username-error").innerHTML = "Username must have a minimum of 3 characters.";
+                flag = false;
+            }
+
+            if (newPassword.value.length < 4) {
+                document.getElementById("new-password-error").innerHTML = "Password is too short.";
+                flag = false;
+            }
+
+            // Save the new user ID and password if there are no errors
+            if (flag) {
+                // You can save the new user ID and password in a database or local storage
+                // For now, let's assume you're saving them in variables.
+                let defaultUsername = "defaultUser"; // Replace with your default user ID
+                let defaultPassword = "defaultPass"; // Replace with your default password
+
+                // Update the default user ID and password with the new values
+                defaultUsername = newUsername.value;
+                defaultPassword = newPassword.value;
+
+                // Redirect to the Dashboard page
+                window.location.href = "dashboard.html";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -12,4 +12,6 @@ Some issues to be inspected while testing the project after the completion of th
 
 6) Add footer (copyright txt) on the middle-bottom od login & dashboard page
 
-7)Free Hosting on internet 
+7) Use HTTPS.
+
+8)Free Domain & Hosting on internet 

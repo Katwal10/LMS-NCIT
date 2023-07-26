@@ -35,6 +35,10 @@
       margin-bottom: 10px;
     }
 
+    #Settings-Form div {
+      margin-top: 30px;
+    }
+
     </style>
 
 </head>
@@ -47,65 +51,83 @@
         </div>
       </div>
     <hr>
-    <br>
 
-    <form action="" id="admin-settings-form">
-
-        <input type="text" placeholder="New User ID" id="new-username"><br>
-        <p class="errors" id="new-username-error"></p>
-            
-        <input type="password" placeholder="New Password" id="new-password"><br>
-        <p class="errors" id="new-password-error"></p>
-            
-        <input type="submit" value="Save Changes" id="save_btn">
+    <form id="Settings-Form">
+      <div>
+        <label name="changeUserID">Change User ID:</label>
+        <input type="text" id="changeUserID" name="changeUserID" minlength="3" required>
+      </div>
+      <div>
+        <label name="changePassword">Change Password:</label>
+        <input type="password" id="changePassword" name="changePassword" required>
+      </div>
+      <div>
+        <label name="confirmChangePassword">Confirm New Password:</label>
+        <input type="password" id="confirmChangePassword" name="confirmChangePassword" required>
+        <span id="passwordError" style="color: red;"></span>
+      </div>
+      <div>
+        <div style="height: 35px; width: 110px; background-color: #6C22C9; cursor: pointer; text-align: center; line-height: 35px; color: white; font-size: large;" id="changeButton">Change</div>
+      </div>
     </form>
+  </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        const goHomeBtn = document.getElementById("GoHome-Btn");
-        goHomeBtn.addEventListener("click", function () {
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const goHomeBtn = document.getElementById("GoHome-Btn");
+      goHomeBtn.addEventListener("click", function () {
         window.location.href = "dashboard.html";
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("confirmChangePassword").addEventListener("keyup", function() {
+        const password = document.getElementById("changePassword").value;
+        const confirmPassword = this.value;
+
+        if (password !== confirmPassword) {
+          document.getElementById("passwordError").textContent = "Password Not Matched.";
+        } else {
+          document.getElementById("passwordError").textContent = "";
+        }
+      });
+
+      document.getElementById("changeButton").addEventListener("click", function() {
+        const userID = document.getElementById("changeUserID").value;
+        const password = document.getElementById("changePassword").value;
+        const confirmPassword = document.getElementById("confirmChangePassword").value;
+
+        if (password !== confirmPassword) {
+          document.getElementById("passwordError").textContent = "Password Not Matched.";
+          return;
+        }
+
+        // Replace 'YOUR_API_ENDPOINT' with your backend API endpoint for database interactions.
+        const apiEndpoint = "YOUR_API_ENDPOINT";
+
+        // Assuming you have an API to handle the database update, send the data to the backend.
+        fetch(apiEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            User_ID: userID,
+            Password: password
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Credentials updated successfully!");
+        })
+        .catch(error => {
+          console.error("Error while updating credentials:", error);
         });
-        });
+      });
+    });
+  </script>
 
-        // JavaScript code for handling form submission
-        document.getElementById("admin-settings-form").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent form submission
-
-            // Reset error messages
-            document.getElementById("new-username-error").innerHTML = "";
-            document.getElementById("new-password-error").innerHTML = "";
-
-            // Perform validation
-            let newUsername = document.getElementById("new-username");
-            let newPassword = document.getElementById("new-password");
-            let flag = true;
-
-            if (newUsername.value.length < 3) {
-                document.getElementById("new-username-error").innerHTML = "Username must have a minimum of 3 characters.";
-                flag = false;
-            }
-
-            if (newPassword.value.length < 4) {
-                document.getElementById("new-password-error").innerHTML = "Password is too short.";
-                flag = false;
-            }
-
-            // Save the new user ID and password if there are no errors
-            if (flag) {
-                // You can save the new user ID and password in a database or local storage
-                // For now, let's assume you're saving them in variables.
-                let defaultUsername = "defaultUser"; // Replace with your default user ID
-                let defaultPassword = "defaultPass"; // Replace with your default password
-
-                // Update the default user ID and password with the new values
-                defaultUsername = newUsername.value;
-                defaultPassword = newPassword.value;
-
-                // Redirect to the Dashboard page
-                window.location.href = "dashboard.html";
-            }
-        });
-    </script>
+    
 </body>
 </html>

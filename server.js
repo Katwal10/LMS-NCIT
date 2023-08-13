@@ -312,26 +312,26 @@ app.delete('/delete-account/:studentID', (req, res) => {
 //Route to store login credentials    
 app.post('/changeCredentials', (req, res) => {
   const userID = req.body.changeUserID;
-  const password = req.body.changePassword;
-  const confirmPassword = req.body.confirmChangePassword;
+  const password = req.body.newPassword;
+  const confirmPassword = req.body.confirmNewPassword;
 
   if (password !== confirmPassword) {
     res.status(400).json({ error: 'Password Not Matched.' });
     return;
   }
 
-  // Update the credentials in the login_credential table.
-  const sql = 'UPDATE login_credential SET Password = ? WHERE User_ID = ?';
-  db.query(sql, [password, userID], (err, result) => {
+  // Update the credentials in the login_credential table
+  const sql = 'UPDATE login_credential SET User_ID = ?, Password = ? WHERE `S.N.` = 1';
+  connection.query(sql, [userID, password], (err, result) => {
     if (err) {
       console.error('Error updating credentials:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'Error updating credentials in the database.' });
       return;
     }
+    console.log('Rows affected:', result.affectedRows); // Add this line
     res.status(200).json({ message: 'Credentials updated successfully!' });
-  });
+  });  
 });
-
 
 
 // Serve static files from the "public" directory

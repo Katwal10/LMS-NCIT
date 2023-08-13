@@ -39,6 +39,28 @@
       margin-top: 30px;
     }
 
+    /* Style for the password input container */
+    .password-input-container {
+     position: relative;
+    }
+
+    /* Style for the password toggle icon */
+    .password-toggle-icon {
+     position: absolute;
+     top: 50%;
+     margin-left: -20px;
+     transform: translateY(-50%);
+     cursor: pointer;
+     height: 15px;
+     width: 15px;
+    }
+
+    /* Additional styling for the icon to make it more visible on hover */
+    .password-toggle-icon:hover {
+     opacity: 0.7;
+    }
+
+
     </style>
 
 </head>
@@ -55,25 +77,27 @@
     <form id="Settings-Form">
       <div>
         <label name="changeUserID">Change User ID:</label>
-        <input type="text" id="changeUserID" name="changeUserID" minlength="3" required>
+        <input type="text" id="changeUserID" name="changeUserID" minlength="3">
       </div>
-      <div>
-        <label name="changePassword">Change Password:</label>
-        <input type="password" id="changePassword" name="changePassword" required>
+      <div class="password-input-container">
+        <label name="newPassword">New Password:</label>
+        <input type="password" id="newPassword" name="newPassword">
+        <img src="Logo&Images/eye-slash-solid.svg" class="password-toggle-icon" id="toggleNewPasswordVisibility">
       </div>
-      <div>
-        <label name="confirmChangePassword">Confirm New Password:</label>
-        <input type="password" id="confirmChangePassword" name="confirmChangePassword" required>
+      <div class="password-input-container">
+        <label name="confirmNewPassword">Confirm New Password:</label>
+        <input type="password" id="confirmNewPassword" name="confirmNewPassword">
+        <img src="Logo&Images/eye-slash-solid.svg" class="password-toggle-icon" id="toggleConfirmNewPasswordVisibility">
         <span id="passwordError" style="color: red;"></span>
       </div>
       <div>
         <div style="height: 35px; width: 110px; background-color: #6C22C9; cursor: pointer; text-align: center; line-height: 35px; color: white; font-size: large;" id="changeButton">Change</div>
       </div>
     </form>
-  </div>
+
 
   <script>
-
+    
     document.addEventListener("DOMContentLoaded", function () {
       const goHomeBtn = document.getElementById("GoHome-Btn");
       goHomeBtn.addEventListener("click", function () {
@@ -81,51 +105,94 @@
       });
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
-      document.getElementById("confirmChangePassword").addEventListener("keyup", function() {
-        const password = document.getElementById("changePassword").value;
-        const confirmPassword = this.value;
+  let toggleNewPasswordVisibility = document.getElementById("toggleNewPasswordVisibility");
+  let newPassword = document.getElementById("newPassword");
 
-        if (password !== confirmPassword) {
-          document.getElementById("passwordError").textContent = "Password Not Matched.";
-        } else {
-          document.getElementById("passwordError").textContent = "";
-        }
-      });
+    toggleNewPasswordVisibility.onclick = function () {
+      if (newPassword.type == "password") {
+        newPassword.type = "text";
+        toggleNewPasswordVisibility.src= "Logo&Images/eye-solid.svg";
+      } else {
+        newPassword.type = "password";
+        toggleNewPasswordVisibility.src= "Logo&Images/eye-slash-solid.svg";
+      }
+    }
 
-      document.getElementById("changeButton").addEventListener("click", function() {
-        const userID = document.getElementById("changeUserID").value;
-        const password = document.getElementById("changePassword").value;
-        const confirmPassword = document.getElementById("confirmChangePassword").value;
+  let toggleConfirmNewPasswordVisibility = document.getElementById("toggleConfirmNewPasswordVisibility");
+  let confirmNewPassword = document.getElementById("confirmNewPassword");
 
-        if (password !== confirmPassword) {
-          document.getElementById("passwordError").textContent = "Password Not Matched.";
-          return;
-        }
+    toggleConfirmNewPasswordVisibility.onclick = function () {
+      if (confirmNewPassword.type == "password") {
+        confirmNewPassword.type = "text";
+        toggleConfirmNewPasswordVisibility.src= "Logo&Images/eye-solid.svg";
+      } else {
+        confirmNewPassword.type = "password";
+        toggleConfirmNewPasswordVisibility.src= "Logo&Images/eye-slash-solid.svg";
+      }
+    }
 
-        // Replace 'YOUR_API_ENDPOINT' with your backend API endpoint for database interactions.
-        const apiEndpoint = "YOUR_API_ENDPOINT";
+  document.getElementById("changeButton").addEventListener("click", function() {
+  const userID = document.getElementById("changeUserID").value;
+  const password = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmNewPassword").value;
 
-        // Assuming you have an API to handle the database update, send the data to the backend.
-        fetch(apiEndpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            User_ID: userID,
-            Password: password
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log("Credentials updated successfully!");
-        })
-        .catch(error => {
-          console.error("Error while updating credentials:", error);
-        });
-      });
-    });
+  // Validate input fields are not empty
+  if (!userID || !password || !confirmPassword) {
+    alert("Please fill in all the fields first.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    document.getElementById("passwordError").textContent = "Password Not Matched.";
+  } else {
+    document.getElementById("passwordError").textContent = ""; // Clear the error message
+  }
+
+
+  // Display the confirmation box
+  const confirmChanges = window.confirm("Confirm changes made?");
+  if (!confirmChanges) {
+    return; // User canceled, do not proceed!
+  }
+
+  // Replace 'YOUR_API_ENDPOINT' with the actual backend API endpoint URL for updating credentials.
+  const URL = "http://localhost:3000/changeCredentials";
+
+  // Assuming you have an API to handle the database update, send the data to the backend.
+  fetch(URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      changeUserID: userID, // Make sure this value is not null
+      newPassword: password,
+      confirmNewPassword: confirmPassword
+    })
+  })
+  .then(response => {
+    // Check the response status code
+    if (!response.ok) {
+      throw new Error('Entered input error.');
+    }
+    // Parse the response body as JSON
+    return response.json();
+  })
+  .then(data => {
+    // Check the response and handle success or error messages accordingly
+    if (data.error) {
+      console.error("Error:", data.error);
+    } else if (data.message) {
+      console.log("Success:", data.message);
+      // Reset the form after successful submission
+    document.getElementById("Settings-Form").reset();
+    }
+  })
+  .catch(error => {
+    console.error("Error:", error);
+  });
+});
+
   </script>
 
     

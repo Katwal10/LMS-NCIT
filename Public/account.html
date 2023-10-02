@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Check Student Account</title>
+  <title>LMS-Nagarjuna College of IT</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="icon" href="Logo&Images/nagarjuna-logo.png" type="image/png"> <!--favicon-->
+
     <style>
       /* Styling for the form */
       h2 {
@@ -213,7 +215,7 @@ document.addEventListener("click", function(event) {
     const bookName = event.target.dataset.bookName;
     const bookIssuedDate = event.target.dataset.issuedDate;
 
-    // Show a confirmation alert box to the user
+    // Show a confirmation box to the user
     const confirmation = window.confirm("Are you sure you want to remove this book from the record?");
     if (confirmation) {
       // Call the removeIssuedBook function with the obtained values

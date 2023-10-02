@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LMS-NCIT</title>
+    <title>LMS-Nagarjuna College of IT</title>
     <script src="client.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>  
+
+    <link rel="icon" href="Logo&Images/nagarjuna-logo.png" type="image/png"> <!--favicon-->
+
+
     <style>
         body {
             margin: 0;
@@ -12,7 +16,6 @@
             align-items: center;
             min-height: 100vh;
         }
-        
         .navbar {
             background-color: #D9D9D9;
             height: 80px;
@@ -24,8 +27,7 @@
             position: fixed;
             top: 0;
             z-index: 1;
-        }
-        
+        }      
         .logo {
             margin-left: 20px;
             font-size: 20px;
@@ -34,8 +36,7 @@
             align-items: center;
             text-align: center;
             font-weight: 150;
-        }
-        
+        }        
         .logo div {
             margin-left: 10px;
         }
@@ -44,7 +45,7 @@
             margin: 5px 50px 0px auto;
         }
                      
-        .logout {
+        #logout-button {
             float: right;
             font-size: 16px;
             margin-right: 20px;
@@ -106,17 +107,24 @@
             background-color: #6C22C9;
             margin: 0;
         }
+
+        p {
+            position: fixed;
+            bottom: 0;
+            margin: auto 0 8px auto;
+            width: 100%;
+            text-align: center;
+            font-size: 15px;
+        }
         
         @media screen and (max-width: 768px) {            
             .container-wrapper {
                 flex-wrap: wrap;
                 margin-top: 120px;
             }
-            
             .container {
                 margin: 10px;
             }
-            
             .circle {
                 margin-top: 10px;
             }
@@ -136,7 +144,7 @@
             <img height="35px" src="Logo&Images/User_Network_Status(On).png">
         </div>
         <div>
-            <button class="logout" onclick="confirmLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+            <button id="logout-button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
         </div>
     </div>
     
@@ -166,8 +174,37 @@
             <h4>Admin Settings</h4>
         </div>
     </div>
-    <!--footer>© 2023 NCIT. All Rights Reserved</footer-->
+    <p>© 2023 NCIT. All Rights Reserved.</p>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const logoutButton = document.getElementById("logout-button");
+        
+          logoutButton.addEventListener("click", function () {
+            if (confirm("Are you sure you want to logout?")) {
+              // Send a POST request to the server's logout route
+              fetch('/logout', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.message === 'Logout successful') {
+                  // Redirect to the login page
+                  window.location.href = "LogIn.html";
+                } else {
+                  console.error('Logout error:', data.message);
+                }
+              })
+              .catch(error => {
+                console.error('Error during logout:', error);
+              });
+            }
+          });
+        });
+        </script>
 
 </body>
 </html>
-

@@ -1,27 +1,20 @@
 Some issues to be inspected while testing the project after the completion of the coding part:
 
-1) FavIcon code attachment
+running on both Windows and macOS
 
-2) Javascript codes in the <script> tag which is present inside html files is to be converted in client.js file or in seperate js file
+Javascript codes in the <script> tag which is present inside html files is to be converted in client.js file or in seperate js file
 
-3) User-status (online/offline) section to be checked while running in the server and while hosting/deploying project in the web. 
+User-status (online/offline) section to be checked while running in the server and while hosting/deploying project in the web. 
 
-4) Authorization & Authentication: Login part and password changing, UserID and Password to be stored somewhere and can be retrieving by clicking Forgot Password button and verification.
+Authorization & Authentication: Login part and password changing, UserID and Password to be stored somewhere and can be retrieving by clicking Forgot Password button and verification.
+   Please note that this code doesn't cover more advanced security features like password hashing or user sessions, which you might want to consider adding for a production application.
 
-5) Divide server.js file codes into routes.js file (Optional)
+Divide server.js file codes into routes.js file (Optional)
 
-6) Inventory's data row delete feature. 
+Use HTTPS.
 
-7) Add footer (copyright txt) on the middle-bottom of login & dashboard page
+Is my project MVC OR Rest API based?
 
-8) Use Postman to test API
+Free Domain & Hosting on intranet?
 
-9) Use HTTPS.
-
-10) Forgot Your Password? -- Feature
-
-11) Is my project MVC OR Rest API based?
-
-12) Free Domain & Hosting on internet?
-
-13) Documentation
+Documentation

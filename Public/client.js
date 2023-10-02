@@ -1,4 +1,4 @@
-
+/*
 function updateStatus() {
     const userStatus = document.getElementById('userStatus');
     const isOnline = navigator.onLine;
@@ -10,13 +10,31 @@ function updateStatus() {
       userStatus.innerHTML = '<img height="35px" src="Logo&Images/User_Network_Status(Off).png">';
       userStatus.title = 'User: Offline';
     }
+  }        
+*/
+  function checkNetworkStatus() {
+    const userStatus = document.getElementById('userStatus');
+    
+    // Attempt to fetch a resource from your local server
+    fetch('/check-network-status')
+      .then(response => {
+        if (response.ok) {
+          // The server is accessible, indicating online status
+          userStatus.innerHTML = '<img height="35px" src="Logo&Images/User_Network_Status(On).png">';
+          userStatus.title = 'User: Online';
+        } else {
+          // The server is not accessible, indicating offline status
+          userStatus.innerHTML = '<img height="35px" src="Logo&Images/User_Network_Status(Off).png">';
+          userStatus.title = 'User: Offline';
+        }
+      })
+      .catch(error => {
+        // An error occurred, indicating offline status
+        userStatus.innerHTML = '<img height="35px" src="Logo&Images/User_Network_Status(Off).png">';
+        userStatus.title = 'User: Offline';
+      });
   }
   
-  function confirmLogout() {
-    if (confirm("Are you sure you want to logout?")) {
-      window.location.href = "LogIn.html";
-    }
-  }
   
   document.addEventListener("DOMContentLoaded", function () {
     const inventoryContainer = document.getElementById("inventoryContainer");

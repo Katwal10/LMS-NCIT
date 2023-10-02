@@ -4,10 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Account Form</title>
+  <title>LMS-Nagarjuna College of IT</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="icon" href="Logo&Images/nagarjuna-logo.png" type="image/png"> <!--favicon-->
   <style>
     body {
       margin: 20px;
@@ -145,6 +146,7 @@
   </form>
 
   <script>
+
   function addBookInput() {
     const bookContainer = document.getElementById("bookContainer");
     const newBookInput = document.createElement("div");
@@ -177,6 +179,12 @@
         book: bookValues
       };
 
+      // Validate input fields are not empty
+      if (!date || !id || !name || !program || !semester || !books) {
+      alert("Please fill in all the fields first.");
+      return;
+      }
+
       fetch('/submit-student', {
         method: 'POST',
         headers: {
@@ -196,6 +204,8 @@
         // Handle any errors that occur during the request
       });
     }
+
+    
 
   document.addEventListener("DOMContentLoaded", function() {
     const checkAccountBtn = document.getElementById("checkAccountBtn");

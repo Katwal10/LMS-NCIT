@@ -100,6 +100,7 @@ Detailed instructions on how to use each feature and module of the Library Manag
 
 
 6. **Inventory Management:**
+   - 
    
 
 
